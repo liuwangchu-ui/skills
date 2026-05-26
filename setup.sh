@@ -2,7 +2,20 @@
 set -u
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-DEST_DIR="${CODEX_HOME:-$HOME/.codex}/skills"
+
+to_posix_path() {
+  if command -v cygpath >/dev/null 2>&1; then
+    cygpath -u "$1" 2>/dev/null || printf '%s\n' "$1"
+  else
+    printf '%s\n' "$1"
+  fi
+}
+
+if [ -n "${CODEX_HOME:-}" ]; then
+  DEST_DIR="$(to_posix_path "$CODEX_HOME")/skills"
+else
+  DEST_DIR="$(to_posix_path "$HOME")/.codex/skills"
+fi
 
 mkdir -p "$DEST_DIR"
 
